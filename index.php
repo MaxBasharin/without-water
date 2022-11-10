@@ -1,25 +1,23 @@
 <?php
-require_once 'setting.php';
 
-// подключение к MySQL
-$connetction = new mysqli($host, $user, $pass, $date);
-if ($connetction->connect_error) die('Error connection');
+$connection = new PDO("mysql: host=without-water;dbname=without_water;charset=utf8", "root", "");
 
-// запрос данных 
-$query = "SELECT * FROM users"; // двойные ковычки если SQL запрос
-$result = $connetction->query($query);
-if (!$result) die('Error select');
+// Прямой запрос
+// $query = "INSERT users (name, age, login) VALUE ('Klim', '25', 'klim4')"; // двойные ковычки если SQL запрос
+// $connection->exec($query);
+$name = 'nik';
+$age = 30;
+$login = 'niknik';
 
-$rows = $result->num_rows;
-for ($i = 0; $i < $rows; ++$i) {
-    $result->data_seek($i);
-    echo 'ID: ' .$result->fetch_assoc()['id_user'] . ' ';
-    echo 'Name: ' .$result->fetch_assoc()['name'] . '<br>';
-}
+$param = [
+    'n' => $name,
+    'age' => $age,
+    'l' => $login
+];
 
-$result->close();
-$connetction->close();
 
-// echo '<pre>';
-// print_r($rows);
-// echo'</pre>';
+
+$sql = "INSERT users (name, age, login) VALUE (:n, :age, :l)";
+$query = $connection->prepare($sql);
+
+$query->execute($param);
